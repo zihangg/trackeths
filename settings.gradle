@@ -1,0 +1,2 @@
+rootProject.name='Trackeths'
+include ':app'

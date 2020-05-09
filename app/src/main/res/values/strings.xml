@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Trackeths</string>
+    <string name="password">Password</string>
+    <string name="e_mail">E-mail</string>
+    <string name="description">Description</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="amount">Amount</string>
+    <string name="date">Date</string>
+</resources>

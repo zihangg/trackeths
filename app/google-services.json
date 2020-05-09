@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "747130941131",
+    "firebase_url": "https://tracketh-c2299.firebaseio.com",
+    "project_id": "tracketh-c2299",
+    "storage_bucket": "tracketh-c2299.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747130941131:android:4cbb01dea6a2316fac754e",
+        "android_client_info": {
+          "package_name": "com.example.trackeths"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "747130941131-2rc0hj1ii4grlu244sk0jgtsi104p2gj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.trackeths",
+            "certificate_hash": "33f77b711a998313d61bf16a8b28e4025db40c51"
+          }
+        },
+        {
+          "client_id": "747130941131-8l8rt1m95s9h8reou032ugvbt4ekicmu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCctJaw9rbDhX9CGFPsg7TDT22HHzMli9c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "747130941131-8l8rt1m95s9h8reou032ugvbt4ekicmu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
