@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/row"
+    android:layout_marginBottom="4dp"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="50dp"
+    app:cardPreventCornerOverlap="true">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:text="Test"
+            android:layout_alignParentLeft="true"
+            android:id="@+id/rowDescription"
+            android:paddingLeft="15dp"
+            android:textSize="20sp">
+        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/segoe_ui"
+            android:id="@+id/rowAmount"
+            android:layout_alignParentRight="true"
+            android:textColor="#FF0A0A"
+            android:text="-$99.99"
+            android:paddingRight="15dp"
+            android:textSize="20sp"
+            >
+
+        </TextView>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
