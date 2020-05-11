@@ -2,13 +2,13 @@ package com.example.trackeths.Globals;
 
 public class Model {
 
-    private String description, amount;
+    private String id, description, amount;
 
     public Model(){
-
     }
 
-    public Model(String description, String amount) {
+    public Model(String id, String description, String amount) {
+        this.id = id;
         this.description = description;
         this.amount = amount;
     }
@@ -29,6 +29,16 @@ public class Model {
     public void setAmount(String amount) {
         this.amount = amount;
     }
+
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
 
 }
 
