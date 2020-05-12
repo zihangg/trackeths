@@ -3,4 +3,5 @@
     <dimen name="custom_peek_height">500dp</dimen>
     <dimen name="marginsLR">60dp</dimen>
     <dimen name="RecyclerMargins">35dp</dimen>
+    <dimen name="roundCorner">50dp</dimen>
 </resources>

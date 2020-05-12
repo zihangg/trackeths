@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/menuHome"
+        android:icon="@drawable/home"
+        android:title="@string/home"/>
+
+    <item
+        android:id="@+id/menuCategories"
+        android:icon="@drawable/categories"
+        android:title="@string/categories"/>
+
+    <item
+        android:id="@+id/menuStatistics"
+        android:icon="@drawable/statistics"
+        android:title="@string/statistics"/>
+
+    <item
+        android:id="@+id/menuSignOut"
+        android:icon="@drawable/sign_out"
+        android:title="@string/sign_out"/>
+
 </menu>

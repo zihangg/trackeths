@@ -7,4 +7,9 @@
     <string name="amount">Amount</string>
     <string name="date">Date</string>
     <string name="edit_expense">Edit Expense</string>
+    <string name="home">Home</string>
+    <string name="categories">Categories</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="statistics">Statistics</string>
+    <string name="add">Add</string>
 </resources>

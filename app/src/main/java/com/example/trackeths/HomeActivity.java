@@ -3,6 +3,8 @@ package com.example.trackeths;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +30,9 @@ import com.example.trackeths.Globals.TransactionClickListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.shape.CornerFamily;
+import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -49,7 +54,8 @@ public class HomeActivity extends AppCompatActivity {
     FirebaseRecyclerAdapter<Model, Holder> adapter;
     private DatabaseReference db;
     private FirebaseAuth mAuth;
-    Button addExpense;
+    DrawerLayout drawerLayout;
+    Button addExpense, menu;
     TextView day, date;
     EditText spentDescription, spentAmount, editDescription, editAmount;
 
@@ -74,6 +80,8 @@ public class HomeActivity extends AppCompatActivity {
         date.setText(currentDate);
 
 
+        drawerLayout = findViewById(R.id.drawer);
+        menu = findViewById(R.id.menu);
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser fUser = mAuth.getCurrentUser();
@@ -83,6 +91,18 @@ public class HomeActivity extends AppCompatActivity {
         expenseList=(RecyclerView)findViewById(R.id.recyclerView);
         expenseList.setHasFixedSize(true);
         expenseList.setLayoutManager(new LinearLayoutManager(this));
+
+
+        //TODO: consider making nav drawer nicer (i.e. refer to XD)
+        //make corner for nav drawer rounded
+        float radius = getResources().getDimension(R.dimen.roundCorner);
+        NavigationView navView = findViewById(R.id.navView);
+        MaterialShapeDrawable navBackground = (MaterialShapeDrawable) navView.getBackground();
+        navBackground.setShapeAppearanceModel(navBackground.getShapeAppearanceModel()
+                .toBuilder()
+                .setTopRightCorner(CornerFamily.ROUNDED, radius)
+                .setBottomRightCorner(CornerFamily.ROUNDED, radius)
+                .build());
 
         addExpense = findViewById(R.id.add);
         db.addValueEventListener(new ValueEventListener() {
@@ -105,6 +125,15 @@ public class HomeActivity extends AppCompatActivity {
         super.onStart();
 
         Log.i(TAG, "On Start.");
+
+        //open nav bar
+        menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
+
 
         //open bottom sheet for transactions adding
         //Todo: add receipt(camera/photo album) and category(hard-coded list(?))
