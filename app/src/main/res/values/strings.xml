@@ -18,4 +18,11 @@
     <string name="c_a_t_e_g_o_r_i_e_s">C A T E G O R I E S</string>
     <string name="category">Category</string>
     <string name="add_category">Add Category</string>
+    <string name="edit_category">Edit Category</string>
+
+    <string name="select_category">Select Category</string>
+    <string-array name="list">
+        <item>Category A</item>
+        <item>Category B</item>
+    </string-array>
 </resources>

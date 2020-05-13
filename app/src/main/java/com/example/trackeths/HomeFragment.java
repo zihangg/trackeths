@@ -3,6 +3,7 @@ package com.example.trackeths;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +11,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +53,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
+import static com.example.trackeths.Globals.Globals.categoryNames;
+
 public class HomeFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
 
 
@@ -62,6 +68,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     TextView day, date;
     EditText spentDescription, spentAmount, editDescription, editAmount;
     String dbDate;
+    Spinner categorySelect;
 
     //required constructor
     public HomeFragment(){
@@ -88,7 +95,6 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
         day.setText(currentDay);
         date.setText(currentDate);
-
 
         drawerLayout = view.findViewById(R.id.drawer);
         menu = view.findViewById(R.id.menu);
@@ -147,6 +153,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         });
 
 
+
         //open bottom sheet for transactions adding
         //Todo: add receipt(camera/photo album) and category(hard-coded list(?))
         addExpense.setOnClickListener(new View.OnClickListener() {
@@ -161,9 +168,27 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                         (LinearLayout)getView().findViewById(R.id.expenseSheet)
                 );
 
+                loadCategories();
                 spentDescription = bottomSheetView.findViewById(R.id.spentDescription);
                 spentAmount = bottomSheetView.findViewById(R.id.spentAmount);
 
+                //dropdown list
+                categorySelect = (Spinner) bottomSheetView.findViewById(R.id.categorySelect);
+                ArrayAdapter<String> categAdapter = new ArrayAdapter<>(bottomSheetView.getContext(), android.R.layout.simple_spinner_item, categoryNames);
+                categAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                categorySelect.setAdapter(categAdapter);
+
+                categorySelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        Log.i(TAG, "x");
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
 
                 bottomSheetView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -325,14 +350,66 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;
+
+            case R.id.menuSignOut:
+                signOut();
+                break;
+
             default:
                 fragmentClass = HomeFragment.class;
         }
 
-
-
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void loadCategories(){
+        FirebaseUser fUser = mAuth.getCurrentUser();
+        DatabaseReference categoryRef = FirebaseDatabase.getInstance().
+                getReference().child("Users").child(fUser.getUid()).child("Categories");
+
+        if (!categoryNames.isEmpty()){
+            categoryNames.clear();
+        }
+
+        categoryRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                    String key = postSnapshot.getKey();
+                    categoryNames.add(key);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void signOut(){
+        AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
+        ad.setTitle("CONFIRMATION");
+        ad.setMessage("Are you sure you want to sign out?");
+        ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mAuth.signOut();
+                Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
+                getActivity().finish();
+                startActivity(intent);
+            }
+        });
+
+        ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();;
+            }
+        });
+        ad.show();
     }
 
 }

@@ -12,6 +12,14 @@
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
     </style>
 
+    <style name="style_Spinner">
+        <item name="android:background">@drawable/dropdown</item>
+        <item name="android:dropDownSelector">@android:color/transparent</item>
+        <item name="android:popupBackground">@android:color/white</item>
+        <item name="android:spinnerMode">dropdown</item>
+    </style>
+
+
     <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
         <item name="behavior_peekHeight">@dimen/custom_peek_height</item>

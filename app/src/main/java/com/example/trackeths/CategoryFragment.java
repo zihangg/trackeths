@@ -1,5 +1,7 @@
 package com.example.trackeths;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -20,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.trackeths.Globals.CategHolder;
 import com.example.trackeths.Globals.Category;
+import com.example.trackeths.Globals.CategoryClickListener;
 import com.example.trackeths.Globals.Holder;
 import com.example.trackeths.Globals.Model;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -47,7 +50,7 @@ public class CategoryFragment extends Fragment {
     Button addCategory;
     RecyclerView categoryList;
     FirebaseRecyclerAdapter<Category, CategHolder> adapter;
-    EditText category;
+    EditText category, editCategory;
 
     public CategoryFragment() {
         // Required empty public constructor
@@ -145,8 +148,69 @@ public class CategoryFragment extends Fragment {
             }
 
             @Override
-            protected void onBindViewHolder(@NonNull CategHolder categHolder, int i, @NonNull Category category) {
+            protected void onBindViewHolder(@NonNull CategHolder categHolder, int i, @NonNull final Category category) {
                 categHolder.category.setText(category.getName());
+
+                categHolder.setCategoryClickListener(new CategoryClickListener() {
+                    @Override
+                    public void onCategoryClickListener(View v, int position) {
+                        final BottomSheetDialog editCategoryDialog = new BottomSheetDialog(
+                                getActivity(), R.style.BottomSheetDialogTheme);
+
+                        final View editCategoryView = LayoutInflater.from(getActivity().getApplicationContext()).inflate(
+                                R.layout.category_edit_sheet,
+                                (LinearLayout)getView().findViewById(R.id.categoryEditSheet)
+                        );
+
+                        editCategory = editCategoryView.findViewById(R.id.editCategoryName);
+                        editCategory.setText(category.getName());
+
+                        editCategoryView.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //confirmation dialog
+                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                alertDialog.setTitle("CONFIRMATION");
+                                alertDialog.setMessage("Are you sure you want to delete?");
+                                alertDialog.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        deleteCategory(category.getName());
+                                        editCategoryDialog.dismiss();
+                                    }
+                                });
+                                alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                alertDialog.show();
+                            }
+                        });
+
+                        editCategoryView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                final String currentName = category.getName();
+                                final String eCategory = editCategory.getText().toString();
+
+                                if (eCategory.isEmpty()){
+                                    Toast.makeText(getActivity(), "Please enter all details.", Toast.LENGTH_SHORT).show();
+                                }
+                                else{
+                                    saveEdit(currentName, eCategory);
+                                    Toast.makeText(getActivity(), "Transaction saved!", Toast.LENGTH_SHORT).show();
+                                    editCategoryDialog.dismiss();
+                                }
+                            }
+                        });
+                        editCategoryDialog.setContentView(editCategoryView);
+                        editCategoryDialog.show();
+                        BottomSheetBehavior bottomSheetBehavior = new BottomSheetBehavior();
+                        bottomSheetBehavior.setPeekHeight(50);
+                    }
+                });
             }
         };
 
@@ -159,5 +223,15 @@ public class CategoryFragment extends Fragment {
         DatabaseReference transactionRef = db.child("Categories");
         Category newCat = new Category(name);
         transactionRef.child(name).setValue(newCat);
+    }
+
+    private void deleteCategory(String name){
+        DatabaseReference transactionRef = db.child("Categories").child(name);
+        transactionRef.removeValue();
+    }
+
+    private void saveEdit(String curName, String newName){
+        deleteCategory(curName);
+        saveCategory(newName);
     }
 }
