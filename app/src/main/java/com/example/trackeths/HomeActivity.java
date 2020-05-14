@@ -69,27 +69,7 @@ public class HomeActivity extends AppCompatActivity{
         }
         fragmentTransaction.commit();
 
-    }
-
-    public void replace(){
 
     }
-
-    public void replaceFragments(Class fragmentClass){
-        Fragment fragment = null;
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.drawer, fragment);
-        fragmentManager.beginTransaction().addToBackStack(null);
-        fragmentManager.beginTransaction().commit();
-    }
-
 
 }

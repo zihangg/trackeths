@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/categorySheet"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/expense_sheet"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:paddingTop="40dp"
+        android:gravity="center"
+        android:text="@string/add_category"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/categoryName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginLeft="100dp"
+        android:hint="@string/category"
+        android:textColorHint="#C0C0C0"
+        android:ems="10"
+        android:fontFamily="@font/segoe_ui"
+        android:inputType="text"
+        android:autofillHints="Category" />
+
+    <Button
+        android:id="@+id/save"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="200dp"
+        android:layout_marginRight="200dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/save" />
+
+
+</LinearLayout>
+

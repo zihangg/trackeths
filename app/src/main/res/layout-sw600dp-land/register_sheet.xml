@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/registerSheet"
+    android:layout_width="800dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/expense_sheet"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/segoe_ui_bold"
+        android:paddingTop="40dp"
+        android:gravity="center"
+        android:text="Sign Up"
+        android:textColor="#000"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/regEmail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
+        android:background="@drawable/email"
+        android:hint="@string/e_mail"
+        android:imeOptions="flagNoExtractUi"
+        android:paddingLeft="180dp"
+        android:textColorHint="#C0C0C0"
+        android:ems="10"
+        android:inputType="textEmailAddress"/>
+
+    <EditText
+        android:id="@+id/regPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="180dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
+        android:background="@drawable/password"
+        android:hint="@string/password"
+        android:imeOptions="flagNoExtractUi"
+        android:textColorHint="#C0C0C0"
+        android:ems="10"
+        android:inputType="textPassword"/>
+
+    <Button
+        android:id="@+id/join"
+        android:layout_width="178dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="80dp"
+        android:background="@drawable/join" />
+
+
+</LinearLayout>
+

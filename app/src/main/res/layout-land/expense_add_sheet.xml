@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fontFamily="@font/segoe_ui_bold"
-        android:paddingTop="40dp"
+        android:paddingTop="25dp"
         android:gravity="center"
         android:text="@string/add_expense"
         android:textColor="#000"
@@ -21,10 +21,11 @@
         android:id="@+id/spentDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="@dimen/marginsLR"
-        android:layout_marginLeft="@dimen/marginsLR"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="150dp"
+        android:layout_marginLeft="150dp"
         android:hint="@string/description"
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="#C0C0C0"
         android:ems="10"
         android:fontFamily="@font/segoe_ui"
@@ -34,14 +35,16 @@
         android:id="@+id/spentAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="@dimen/marginsLR"
-        android:layout_marginLeft="@dimen/marginsLR"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="150dp"
+        android:layout_marginLeft="150dp"
         android:hint="@string/amount"
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="#C0C0C0"
         android:fontFamily="@font/segoe_ui"
         android:ems="10"
         android:inputType="numberDecimal"/>
+
     <!--
     <Spinner
         android:id="@+id/categorySelect"
@@ -69,9 +72,9 @@
 
     <Button
         android:id="@+id/save"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="250dp"
+        android:layout_marginRight="250dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/save" />

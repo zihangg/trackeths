@@ -17,6 +17,11 @@
         android:title="@string/statistics"/>
 
     <item
+        android:id="@+id/menuHistory"
+        android:icon="@drawable/history"
+        android:title="@string/history"/>
+
+    <item
         android:id="@+id/menuSignOut"
         android:icon="@drawable/sign_out"
         android:title="@string/sign_out"/>

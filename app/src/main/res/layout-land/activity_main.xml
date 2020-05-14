@@ -40,10 +40,10 @@
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.382"
+        app:layout_constraintHorizontal_bias="0.446"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="0.964" />
 
     <TextView
         android:id="@+id/register"
@@ -55,10 +55,10 @@
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.066"
+        app:layout_constraintHorizontal_bias="0.027"
         app:layout_constraintStart_toEndOf="@+id/textView2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.963" />
+        app:layout_constraintVertical_bias="0.964" />
 
     <EditText
         android:id="@+id/email"
@@ -70,6 +70,7 @@
         android:paddingLeft="80dp"
         android:textColor="#000"
         android:textColorHint="#757575"
+        android:imeOptions="flagNoExtractUi"
         android:background="@drawable/email"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,6 +90,7 @@
         android:paddingLeft="80dp"
         android:textColor="#000"
         android:textColorHint="#757575"
+        android:imeOptions="flagNoExtractUi"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

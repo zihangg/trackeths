@@ -23,8 +23,6 @@ import android.widget.Toast;
 import com.example.trackeths.Globals.CategHolder;
 import com.example.trackeths.Globals.Category;
 import com.example.trackeths.Globals.CategoryClickListener;
-import com.example.trackeths.Globals.Holder;
-import com.example.trackeths.Globals.Model;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;

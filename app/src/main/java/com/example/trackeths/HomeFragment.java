@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -79,6 +80,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState){
         View view =  inflater.inflate(R.layout.fragment_home, parent, false);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
         Date c = Calendar.getInstance().getTime();
         String currentDay = LocalDate.now().getDayOfWeek().name();
@@ -166,17 +168,19 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                 final View bottomSheetView = LayoutInflater.from(getActivity().getApplicationContext()).inflate(
                         R.layout.expense_add_sheet,
                         (LinearLayout)getView().findViewById(R.id.expenseSheet)
+
                 );
 
                 loadCategories();
                 spentDescription = bottomSheetView.findViewById(R.id.spentDescription);
                 spentAmount = bottomSheetView.findViewById(R.id.spentAmount);
 
-                //dropdown list
+                /*//dropdown list
                 categorySelect = (Spinner) bottomSheetView.findViewById(R.id.categorySelect);
                 ArrayAdapter<String> categAdapter = new ArrayAdapter<>(bottomSheetView.getContext(), android.R.layout.simple_spinner_item, categoryNames);
                 categAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                 categorySelect.setAdapter(categAdapter);
+
 
                 categorySelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -188,7 +192,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                     public void onNothingSelected(AdapterView<?> parent) {
 
                     }
-                });
+                });*/
 
                 bottomSheetView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -350,6 +354,15 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
                 break;
+
+
+            case R.id.menuHistory:
+                HistoryFragment historyFragment = new HistoryFragment();
+                fragmentTransaction.add(R.id.drawer, historyFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
+
 
             case R.id.menuSignOut:
                 signOut();

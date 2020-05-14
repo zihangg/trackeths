@@ -21,27 +21,28 @@
         android:id="@+id/spentDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="@dimen/marginsLR"
         android:layout_marginLeft="@dimen/marginsLR"
-        android:hint="@string/description"
-        android:textColorHint="#C0C0C0"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="@dimen/marginsLR"
         android:ems="10"
         android:fontFamily="@font/segoe_ui"
-        android:inputType="text"/>
+        android:hint="@string/description"
+        android:inputType="text"
+        android:textColorHint="#C0C0C0" />
 
     <EditText
         android:id="@+id/spentAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:layout_marginRight="@dimen/marginsLR"
         android:layout_marginLeft="@dimen/marginsLR"
-        android:hint="@string/amount"
-        android:textColorHint="#C0C0C0"
-        android:fontFamily="@font/segoe_ui"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="@dimen/marginsLR"
         android:ems="10"
-        android:inputType="numberDecimal"/>
+        android:fontFamily="@font/segoe_ui"
+        android:hint="@string/amount"
+        android:inputType="numberDecimal"
+        android:textColorHint="#C0C0C0" />
+
     <!--
     <Spinner
         android:id="@+id/categorySelect"
@@ -57,6 +58,7 @@
         android:layout_margin="10dp" />
         -->
 
+
     <Button
         android:id="@+id/button"
         android:layout_width="228dp"
@@ -69,12 +71,12 @@
 
     <Button
         android:id="@+id/save"
-        android:layout_marginTop="30dp"
-        android:layout_marginLeft="80dp"
-        android:layout_marginRight="80dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/save" />
+        android:layout_marginLeft="120dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="120dp"
+        android:background="@drawable/save"/>
 
 
 </LinearLayout>

@@ -10,10 +10,11 @@
 
     <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="android:windowSoftInputMode">adjustNothing</item>
     </style>
 
     <style name="style_Spinner">
-        <item name="android:background">@drawable/dropdown</item>
+        <item name="android:background">@drawable/dropdown_history</item>
         <item name="android:dropDownSelector">@android:color/transparent</item>
         <item name="android:popupBackground">@android:color/white</item>
         <item name="android:spinnerMode">dropdown</item>
