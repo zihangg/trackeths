@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,11 +33,19 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.trackeths.Globals.Holder;
 import com.example.trackeths.Globals.Model;
 import com.example.trackeths.Globals.TransactionClickListener;
+import com.example.trackeths.Globals.User;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.shape.CornerFamily;
@@ -66,9 +76,10 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     private FirebaseAuth mAuth;
     DrawerLayout drawerLayout;
     Button addExpense, menu;
-    TextView day, date;
+    TextView day, date, profileName, profileEmail;
+    ImageView profilePicture;
     EditText spentDescription, spentAmount, editDescription, editAmount;
-    String dbDate;
+    String dbDate, userId;
     Spinner categorySelect;
 
     //required constructor
@@ -102,14 +113,20 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         menu = view.findViewById(R.id.menu);
 
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser fUser = mAuth.getCurrentUser();
-        db = FirebaseDatabase.getInstance().getReference().child("Users").child(fUser.getUid());
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+        if(account != null){
+            userId = account.getId();
+        }
+        else{
+            userId = mAuth.getCurrentUser().getUid();
+        }
+
+        db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);
 
-        expenseList=(RecyclerView)view.findViewById(R.id.recyclerView);
+        expenseList= view.findViewById(R.id.recyclerView);
         expenseList.setHasFixedSize(true);
         expenseList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
 
         //TODO: consider making nav drawer nicer (i.e. refer to XD)
         //make corner for nav drawer rounded
@@ -150,7 +167,41 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                profileName = drawerLayout.findViewById(R.id.profileName);
+                profileEmail = drawerLayout.findViewById(R.id.profileEmail);
+                profilePicture = drawerLayout.findViewById(R.id.profilePicture);
+
                 drawerLayout.openDrawer(GravityCompat.START);
+
+                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount((getActivity()));
+                if (account != null){
+                    profileName.setText(account.getDisplayName());
+                    profileEmail.setText(account.getEmail());
+                    if(account.getPhotoUrl() == null){
+                        //if no profile picture, use default image
+                        profilePicture.setImageResource(R.drawable.profile_picture);
+                    }
+                    else{
+                        Uri profilePictureUrl = account.getPhotoUrl();
+                        Glide.with(getActivity()).load(String.valueOf(profilePictureUrl)).into(profilePicture);
+                    }
+                }
+
+                else{
+                    db.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            profileName.setText(user.getName());
+                            profileEmail.setText(user.getEmail());
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
         });
 
@@ -403,13 +454,27 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     }
 
     private void signOut(){
+
+        final GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+
         AlertDialog.Builder ad = new AlertDialog.Builder(getActivity());
         ad.setTitle("CONFIRMATION");
         ad.setMessage("Are you sure you want to sign out?");
         ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mAuth.signOut();
+                if (account != null){
+                    GoogleSignInClient signInClient = GoogleSignIn.getClient(getActivity(), GoogleSignInOptions.DEFAULT_SIGN_IN);
+                    signInClient.signOut().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(getActivity(), "Signed out successfully!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                else{
+                    mAuth.signOut();
+                }
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                 getActivity().finish();
                 startActivity(intent);
@@ -419,10 +484,11 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         ad.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();;
+                dialog.dismiss();
             }
         });
         ad.show();
     }
+
 
 }

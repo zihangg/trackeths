@@ -25,6 +25,8 @@ import com.example.trackeths.Globals.Holder;
 import com.example.trackeths.Globals.Model;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +52,7 @@ public class HistoryFragment extends Fragment {
     private RecyclerView historyList;
     private String dbDate;
     FirebaseRecyclerAdapter<Model, Holder> adapter;
+    String userId;
 
     public HistoryFragment(){
 
@@ -63,11 +66,18 @@ public class HistoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         Log.i("Debugging", "Starting Category Fragment");
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser fUser = mAuth.getCurrentUser();
-        db = FirebaseDatabase.getInstance().getReference().child("Users").child(fUser.getUid());
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+        if(account != null){
+            userId = account.getId();
+        }
+        else{
+            userId = mAuth.getCurrentUser().getUid();
+        }
+
+        db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);
 
-        historyList=(RecyclerView)view.findViewById(R.id.recyclerView);
+        historyList= view.findViewById(R.id.recyclerView);
         historyList.setHasFixedSize(true);
         historyList.setLayoutManager(new LinearLayoutManager(getActivity()));
 

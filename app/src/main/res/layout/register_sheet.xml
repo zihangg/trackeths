@@ -47,6 +47,21 @@
         android:ems="10"
         android:inputType="textPassword"/>
 
+    <EditText
+        android:id="@+id/regName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="80dp"
+        android:layout_marginRight="@dimen/marginsLR"
+        android:layout_marginLeft="@dimen/marginsLR"
+        android:background="@drawable/name"
+        android:hint="@string/full_name"
+        android:textColorHint="#C0C0C0"
+        android:fontFamily="@font/segoe_ui"
+        android:ems="10"
+        android:inputType="text"/>
+
     <Button
         android:id="@+id/join"
         android:layout_width="178dp"

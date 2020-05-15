@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/registerSheet"
-    android:layout_width="match_parent"
+    android:layout_width="800dp"
     android:layout_height="wrap_content"
+    android:layout_gravity="center"
     android:background="@drawable/expense_sheet"
     android:orientation="vertical">
 
@@ -11,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/segoe_ui_bold"
-        android:paddingTop="40dp"
+        android:paddingTop="25dp"
         android:gravity="center"
         android:text="Sign Up"
         android:textColor="#000"
@@ -21,13 +22,13 @@
         android:id="@+id/regEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:layout_marginRight="150dp"
-        android:layout_marginLeft="150dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
         android:background="@drawable/email"
         android:hint="@string/e_mail"
         android:imeOptions="flagNoExtractUi"
-        android:paddingLeft="150dp"
+        android:paddingLeft="100dp"
         android:textColorHint="#C0C0C0"
         android:ems="10"
         android:inputType="textEmailAddress"/>
@@ -36,16 +37,31 @@
         android:id="@+id/regPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:paddingLeft="150dp"
-        android:layout_marginRight="150dp"
-        android:layout_marginLeft="150dp"
-        android:imeOptions="flagNoExtractUi"
+        android:layout_marginTop="25dp"
+        android:paddingLeft="100dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
         android:background="@drawable/password"
         android:hint="@string/password"
+        android:imeOptions="flagNoExtractUi"
         android:textColorHint="#C0C0C0"
         android:ems="10"
         android:inputType="textPassword"/>
+
+    <EditText
+        android:id="@+id/regName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:paddingLeft="100dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
+        android:background="@drawable/name"
+        android:hint="@string/full_name"
+        android:textColorHint="#C0C0C0"
+        android:fontFamily="@font/segoe_ui"
+        android:ems="10"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/join"
@@ -53,7 +69,7 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content"
         android:layout_marginLeft="80dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="25dp"
         android:layout_marginRight="80dp"
         android:background="@drawable/join" />
 

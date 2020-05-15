@@ -23,6 +23,7 @@
     <string name="select_category">Select Category</string>
     <string name="history">History</string>
     <string name="h_i_s_t_o_r_y">H I S T O R Y</string>
+    <string name="full_name">Full Name</string>
     <string-array name="list">
         <item>Category A</item>
         <item>Category B</item>

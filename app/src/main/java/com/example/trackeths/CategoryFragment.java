@@ -25,6 +25,8 @@ import com.example.trackeths.Globals.Category;
 import com.example.trackeths.Globals.CategoryClickListener;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +51,7 @@ public class CategoryFragment extends Fragment {
     RecyclerView categoryList;
     FirebaseRecyclerAdapter<Category, CategHolder> adapter;
     EditText category, editCategory;
+    String userId;
 
     public CategoryFragment() {
         // Required empty public constructor
@@ -61,11 +64,18 @@ public class CategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_category, container, false);
         Log.i("Debugging", "Starting Category Fragment");
         mAuth = FirebaseAuth.getInstance();
-        FirebaseUser fUser = mAuth.getCurrentUser();
-        db = FirebaseDatabase.getInstance().getReference().child("Users").child(fUser.getUid());
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
+        if(account != null){
+            userId = account.getId();
+        }
+        else{
+            userId = mAuth.getCurrentUser().getUid();
+        }
+
+        db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);
 
-        categoryList = (RecyclerView) view.findViewById(R.id.recyclerView);
+        categoryList = view.findViewById(R.id.recyclerView);
         categoryList.setHasFixedSize(true);
         categoryList.setLayoutManager(new LinearLayoutManager(getActivity()));
 

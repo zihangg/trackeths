@@ -28,7 +28,7 @@
         android:background="@drawable/email"
         android:hint="@string/e_mail"
         android:imeOptions="flagNoExtractUi"
-        android:paddingLeft="180dp"
+        android:paddingLeft="120dp"
         android:textColorHint="#C0C0C0"
         android:ems="10"
         android:inputType="textEmailAddress"/>
@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:paddingLeft="180dp"
+        android:paddingLeft="120dp"
         android:layout_marginRight="250dp"
         android:layout_marginLeft="250dp"
         android:background="@drawable/password"
@@ -47,6 +47,21 @@
         android:textColorHint="#C0C0C0"
         android:ems="10"
         android:inputType="textPassword"/>
+
+    <EditText
+        android:id="@+id/regName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingLeft="120dp"
+        android:layout_marginRight="250dp"
+        android:layout_marginLeft="250dp"
+        android:background="@drawable/name"
+        android:hint="@string/full_name"
+        android:textColorHint="#C0C0C0"
+        android:fontFamily="@font/segoe_ui"
+        android:ems="10"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/join"
