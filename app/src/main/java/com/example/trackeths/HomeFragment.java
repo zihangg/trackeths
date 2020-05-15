@@ -222,7 +222,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
                 );
 
-                loadCategories();
+                //loadCategories();
                 spentDescription = bottomSheetView.findViewById(R.id.spentDescription);
                 spentAmount = bottomSheetView.findViewById(R.id.spentAmount);
 
@@ -428,9 +428,8 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     }
 
     private void loadCategories(){
-        FirebaseUser fUser = mAuth.getCurrentUser();
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().
-                getReference().child("Users").child(fUser.getUid()).child("Categories");
+                getReference().child("Users").child(userId).child("Categories");
 
         if (!categoryNames.isEmpty()){
             categoryNames.clear();

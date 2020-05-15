@@ -7,16 +7,43 @@
     android:id="@+id/drawer"
     tools:context=".HomeActivity">
 
-    <fragment
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:name="com.example.trackeths.HomeFragment" />
+        tools:ignore="UselessParent">
+        <fragment
+            android:id="@+id/none"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:tag="fragment_tag"
+            android:name="com.example.trackeths.HomeFragment" />
+    </FrameLayout>
 
-    <fragment
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:name="com.example.trackeths.CategoryFragment"/>
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tabLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:tabGravity="fill"
+            app:tabMode="fixed"
+            app:tabTextColor="#fff"
+            app:tabIndicatorColor="#fff"
+            android:background="@color/colorPrimaryDark"
+            />
+
+        <androidx.viewpager.widget.ViewPager
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPager"/>
+
+    </LinearLayout>
+
 
 </LinearLayout>

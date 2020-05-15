@@ -27,6 +27,7 @@
         android:layout_marginLeft="150dp"
         android:hint="@string/description"
         android:textColorHint="#C0C0C0"
+        android:imeOptions="flagNoExtractUi"
         android:ems="10"
         android:fontFamily="@font/segoe_ui"
         android:inputType="text"/>
@@ -41,6 +42,7 @@
         android:hint="@string/amount"
         android:textColorHint="#C0C0C0"
         android:fontFamily="@font/segoe_ui"
+        android:imeOptions="flagNoExtractUi"
         android:ems="10"
         android:inputType="numberDecimal"/>
 
