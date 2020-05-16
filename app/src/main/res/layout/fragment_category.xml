@@ -36,10 +36,11 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_marginRight="@dimen/RecyclerMargins"
         android:layout_marginLeft="@dimen/RecyclerMargins"
-        android:layout_marginTop="130dp"
+        app:layout_constraintBottom_toTopOf="@id/add"
+        app:layout_constraintTop_toBottomOf="@id/imageView"
         android:id="@+id/recyclerView">
     </androidx.recyclerview.widget.RecyclerView>
 

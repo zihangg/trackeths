@@ -67,6 +67,7 @@ public class HomeActivity extends AppCompatActivity{
             Log.i("Debug Orientation", "Orientation is Landscape.");
             adapter.addFragment(new CategoryFragment(), "Categories");
             adapter.addFragment(new HistoryFragment(), "History");
+            adapter.addFragment(new ProfileFragment(), "Profile");
 
             viewPager.setAdapter(adapter);
             tabLayout.setupWithViewPager(viewPager);

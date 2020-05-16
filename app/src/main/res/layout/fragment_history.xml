@@ -53,13 +53,16 @@
         app:layout_constraintTop_toBottomOf="@id/imageView"
         app:layout_constraintVertical_bias="0.016" />
 
+
     <androidx.recyclerview.widget.RecyclerView
+        android:layout_gravity="center"
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/RecyclerMargins"
+        android:layout_height="0dp"
         android:layout_marginLeft="@dimen/RecyclerMargins"
-        android:layout_marginTop="210dp"
-        android:id="@+id/recyclerView">
-    </androidx.recyclerview.widget.RecyclerView>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dateSelect"
+        android:layout_marginRight="@dimen/RecyclerMargins"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

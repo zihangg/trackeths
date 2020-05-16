@@ -42,20 +42,20 @@
         android:fontFamily="@font/segoe_ui"
         android:ems="10"
         android:inputType="numberDecimal"/>
-    <!--
+
     <Spinner
         android:id="@+id/categorySelect"
-        style="@style/style_Spinner"
+        style="@style/categorySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
+        android:gravity="center"
         android:prompt="@string/select_category"
         android:entries="@array/list"
         android:layout_marginLeft="@dimen/marginsLR"
         android:layout_marginRight="@dimen/marginsLR"
         android:layout_margin="10dp" />
-        -->
 
     <Button
         android:id="@+id/button"

@@ -43,11 +43,25 @@
         android:ems="10"
         android:inputType="numberDecimal"/>
 
+    <Spinner
+        android:id="@+id/categorySelect"
+        style="@style/categorySpinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:prompt="@string/select_category"
+        android:entries="@array/list"
+        android:layout_marginLeft="@dimen/marginsLR"
+        android:layout_marginRight="@dimen/marginsLR"
+        android:layout_margin="10dp" />
+
     <Button
         android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="10dp"
         android:layout_marginRight="@dimen/marginsLR"
         android:layout_marginLeft="@dimen/marginsLR"
         android:background="@drawable/receipt"
@@ -57,7 +71,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="20dp">
 
 
         <Button
@@ -65,7 +80,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="80dp"
-            android:layout_marginTop="30dp"
             android:layout_weight="1"
             android:background="@drawable/delete" />
 
@@ -73,7 +87,6 @@
             android:id="@+id/save"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="30dp"
             android:layout_marginRight="80dp"
             android:layout_weight="1"
             android:background="@drawable/save_edit"

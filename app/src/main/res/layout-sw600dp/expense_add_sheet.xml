@@ -43,20 +43,19 @@
         android:inputType="numberDecimal"
         android:textColorHint="#C0C0C0" />
 
-    <!--
     <Spinner
         android:id="@+id/categorySelect"
-        style="@style/style_Spinner"
+        style="@style/categorySpinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
+        android:gravity="center"
         android:prompt="@string/select_category"
         android:entries="@array/list"
         android:layout_marginLeft="@dimen/marginsLR"
         android:layout_marginRight="@dimen/marginsLR"
         android:layout_margin="10dp" />
-        -->
 
 
     <Button
@@ -73,9 +72,9 @@
         android:id="@+id/save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="120dp"
+        android:layout_marginLeft="180dp"
         android:layout_marginTop="20dp"
-        android:layout_marginRight="120dp"
+        android:layout_marginRight="180dp"
         android:background="@drawable/save"/>
 
 

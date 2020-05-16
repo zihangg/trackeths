@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,6 +62,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
@@ -80,6 +83,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     ImageView profilePicture;
     EditText spentDescription, spentAmount, editDescription, editAmount;
     String dbDate, userId;
+    ArrayList<String> categories = new ArrayList<>();
     Spinner categorySelect;
 
     //required constructor
@@ -112,6 +116,12 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         drawerLayout = view.findViewById(R.id.drawer);
         menu = view.findViewById(R.id.menu);
 
+        //remove menu since landscape has slide view
+        Configuration config = getResources().getConfiguration();
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            menu.setVisibility(View.GONE);
+        }
+
         mAuth = FirebaseAuth.getInstance();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
         if(account != null){
@@ -123,10 +133,12 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
         db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);
+        loadCategories(categories);
 
         expenseList= view.findViewById(R.id.recyclerView);
         expenseList.setHasFixedSize(true);
         expenseList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
 
         //TODO: consider making nav drawer nicer (i.e. refer to XD)
         //make corner for nav drawer rounded
@@ -222,34 +234,22 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
                 );
 
-                //loadCategories();
                 spentDescription = bottomSheetView.findViewById(R.id.spentDescription);
                 spentAmount = bottomSheetView.findViewById(R.id.spentAmount);
 
-                /*//dropdown list
-                categorySelect = (Spinner) bottomSheetView.findViewById(R.id.categorySelect);
-                ArrayAdapter<String> categAdapter = new ArrayAdapter<>(bottomSheetView.getContext(), android.R.layout.simple_spinner_item, categoryNames);
-                categAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                categorySelect.setAdapter(categAdapter);
+                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),
+                        R.layout.dropdown_category_spinner);
+                categorySelect = bottomSheetView.findViewById(R.id.categorySelect);
+                categorySelect.setAdapter(dataAdapter);
+                loadAdapters(dataAdapter);
 
-
-                categorySelect.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Log.i(TAG, "x");
-                    }
-
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });*/
 
                 bottomSheetView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final String enterAmount = spentAmount.getText().toString();
                         final String enterDescription = spentDescription.getText().toString();
+                        final String enterCategory = categorySelect.getSelectedItem().toString();
 
                         if (enterAmount.isEmpty() && enterDescription.isEmpty()){
                             Toast.makeText(getActivity(), "Please enter all details.", Toast.LENGTH_SHORT).show();
@@ -261,7 +261,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                             Toast.makeText(getActivity(), "Please enter the description.", Toast.LENGTH_SHORT).show();
                         }
                         else{
-                            saveTransaction(enterAmount, enterDescription);
+                            saveTransaction(enterAmount, enterDescription, enterCategory);
                             Toast.makeText(getActivity(), "Transaction added!", Toast.LENGTH_SHORT).show();
                             bottomSheetDialog.dismiss();
                         }
@@ -299,11 +299,30 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                                 (LinearLayout)getView().findViewById(R.id.expense_edit_Sheet)
                         );
 
+                        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(),
+                                R.layout.dropdown_category_spinner);
+                        categorySelect = editSheetView.findViewById(R.id.categorySelect);
+                        categorySelect.setAdapter(dataAdapter);
+                        loadAdapters(dataAdapter);
+                        Log.i("DEBUG", "Size = " + categories.size());
+                        for(int i = 0; i<categories.size(); i++){
+                            if(model.getCategory().equals(categories.get(i))){
+                                categorySelect.setSelection(i);
+                                Log.i("DEBUG", categories.get(i) + i);
+                            }
+                        }
+
                         editDescription = editSheetView.findViewById(R.id.editDescription);
                         editAmount = editSheetView.findViewById(R.id.editAmount);
 
                         editDescription.setText(model.getDescription());
                         editAmount.setText(model.getAmount());
+
+
+
+
+
+
 
                         editSheetView.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -336,6 +355,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                             public void onClick(View v) {
                                 final String eAmount = editAmount.getText().toString();
                                 final String eDescription = editDescription.getText().toString();
+                                final String eCategory = categorySelect.getSelectedItem().toString();
 
                                 if (eAmount.isEmpty() && eDescription.isEmpty()){
                                     Toast.makeText(getActivity(), "Please enter all details.", Toast.LENGTH_SHORT).show();
@@ -347,7 +367,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                                     Toast.makeText(getActivity(), "Please enter the description.", Toast.LENGTH_SHORT).show();
                                 }
                                 else{
-                                    saveEdit(model.getId(), eAmount, eDescription);
+                                    saveEdit(model.getId(), eAmount, eDescription, eCategory);
                                     Toast.makeText(getActivity(), "Transaction saved!", Toast.LENGTH_SHORT).show();
                                     editSheetDialog.dismiss();
                                 }
@@ -380,17 +400,18 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         transactionRef.removeValue();
     }
 
-    private void saveTransaction(String amount, String description){
+    private void saveTransaction(String amount, String description, String category){
         DatabaseReference transactionRef = db.child("Transactions").child(dbDate);
         String id = transactionRef.push().getKey();
-        Model newEntry = new Model(id, description, amount);
+        Model newEntry = new Model(id, description, amount, category);
         transactionRef.child(id).setValue(newEntry);
     }
 
-    private void saveEdit(String id, String amount, String description){
+    private void saveEdit(String id, String amount, String description, String category){
         DatabaseReference transactionRef = db.child("Transactions").child(dbDate);
         transactionRef.child(id).child("amount").setValue(amount);
         transactionRef.child(id).child("description").setValue(description);
+        transactionRef.child(id).child("category").setValue(category);
     }
 
     @Override
@@ -427,21 +448,25 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         return true;
     }
 
-    private void loadCategories(){
+    private void loadAdapters(final ArrayAdapter<String> adapter){
+        adapter.clear();
+        for(int i = 0; i<categories.size(); i++){
+            adapter.add(categories.get(i));
+        }
+    }
+
+    private void loadCategories(final ArrayList<String> categories){
         DatabaseReference categoryRef = FirebaseDatabase.getInstance().
                 getReference().child("Users").child(userId).child("Categories");
-
-        if (!categoryNames.isEmpty()){
-            categoryNames.clear();
-        }
 
         categoryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()){
+                categories.clear();
+                for(DataSnapshot postSnapshot : dataSnapshot.getChildren()){
                     String key = postSnapshot.getKey();
-                    categoryNames.add(key);
-
+                    categories.add(key);
+                    Log.i("DEBUG", "Size = " + categories.size());
                 }
             }
 
@@ -488,6 +513,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         });
         ad.show();
     }
+
 
 
 }
