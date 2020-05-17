@@ -71,7 +71,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="10dp"
-            android:entries="@array/list"
             android:gravity="center"
             android:prompt="@string/select_category"
             android:textAlignment="center"

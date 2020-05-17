@@ -53,7 +53,6 @@
         android:textAlignment="center"
         android:gravity="center"
         android:prompt="@string/select_category"
-        android:entries="@array/list"
         android:layout_marginLeft="@dimen/marginsLR"
         android:layout_marginRight="@dimen/marginsLR"
         android:layout_margin="10dp" />

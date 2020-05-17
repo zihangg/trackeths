@@ -13,7 +13,6 @@
     <string name="statistics">Statistics</string>
     <string name="add">Add</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="c_a_t_e_g_o_r_i_e_s">C A T E G O R I E S</string>
     <string name="category">Category</string>
@@ -24,8 +23,11 @@
     <string name="history">History</string>
     <string name="h_i_s_t_o_r_y">H I S T O R Y</string>
     <string name="full_name">Full Name</string>
-    <string-array name="list">
-        <item>Category A</item>
-        <item>Category B</item>
+    <string name="s_t_a_t_i_s_t_i_c_s">S T A T I S T I C S</string>
+    <string-array name="statistics">
+        <item name = "24hrs">Past 24 Hours</item>
+        <item name = "7days">Past 7 Days</item>
+        <item name = "month">Past Month</item>
+        <item name = "year">Past Year</item>
     </string-array>
 </resources>

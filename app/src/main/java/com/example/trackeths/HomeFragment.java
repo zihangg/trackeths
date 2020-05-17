@@ -73,18 +73,18 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
 
     private final static String TAG = "Testing";
-    RecyclerView expenseList;
-    FirebaseRecyclerAdapter<Model, Holder> adapter;
+    private RecyclerView expenseList;
+    private FirebaseRecyclerAdapter<Model, Holder> adapter;
     private DatabaseReference db;
     private FirebaseAuth mAuth;
-    DrawerLayout drawerLayout;
-    Button addExpense, menu;
-    TextView day, date, profileName, profileEmail;
-    ImageView profilePicture;
-    EditText spentDescription, spentAmount, editDescription, editAmount;
-    String dbDate, userId;
-    ArrayList<String> categories = new ArrayList<>();
-    Spinner categorySelect;
+    private DrawerLayout drawerLayout;
+    private Button addExpense, menu;
+    private TextView day, date, profileName, profileEmail;
+    private ImageView profilePicture;
+    private EditText spentDescription, spentAmount, editDescription, editAmount;
+    private String dbDate, userId;
+    private ArrayList<String> categories = new ArrayList<>();
+    private Spinner categorySelect;
 
     //required constructor
     public HomeFragment(){
@@ -220,7 +220,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
 
         //open bottom sheet for transactions adding
-        //Todo: add receipt(camera/photo album) and category(hard-coded list(?))
+        //Todo: add receipt(camera/photo album)
         addExpense.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
@@ -435,6 +435,12 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                 fragmentTransaction.commit();
                 break;
 
+            case R.id.menuStatistics:
+                StatisticsFragment statisticsFragment = new StatisticsFragment();
+                fragmentTransaction.add(R.id.drawer, statisticsFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+                break;
 
             case R.id.menuSignOut:
                 signOut();
