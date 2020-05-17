@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity{
             adapter.addFragment(new CategoryFragment(), "Categories");
             adapter.addFragment(new HistoryFragment(), "History");
             adapter.addFragment(new ProfileFragment(), "Profile");
+            adapter.addFragment(new StatisticsFragment(), "Statistics");
 
             viewPager.setAdapter(adapter);
             tabLayout.setupWithViewPager(viewPager);
