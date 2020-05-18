@@ -80,13 +80,8 @@ public class StatisticsFragment extends Fragment {
 
 
         mAuth = FirebaseAuth.getInstance();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
-        if(account != null){
-            userId = account.getId();
-        }
-        else{
-            userId = mAuth.getCurrentUser().getUid();
-        }
+        userId = mAuth.getCurrentUser().getUid();
+
 
         db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);

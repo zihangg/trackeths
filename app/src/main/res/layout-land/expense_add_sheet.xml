@@ -66,14 +66,16 @@
             android:textAlignment="center"
             app:layout_constraintBottom_toTopOf="@id/save"
             app:layout_constraintEnd_toEndOf="@id/container"
-            app:layout_constraintStart_toEndOf="@id/button"
+            app:layout_constraintStart_toEndOf="@id/receipt"
             app:layout_constraintTop_toTopOf="@id/container" />
 
-        <Button
-            android:id="@+id/button"
+        <ImageView
+            android:id="@+id/receipt"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center"
+            android:clickable="true"
+            android:focusable="true"
             android:layout_marginTop="10dp"
             android:background="@drawable/receipt"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -90,7 +92,7 @@
             android:background="@drawable/save"
             app:layout_constraintBottom_toBottomOf="@id/container"
             app:layout_constraintEnd_toEndOf="@id/container"
-            app:layout_constraintStart_toEndOf="@id/button"
+            app:layout_constraintStart_toEndOf="@id/receipt"
             app:layout_constraintTop_toBottomOf="@id/categorySelect" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

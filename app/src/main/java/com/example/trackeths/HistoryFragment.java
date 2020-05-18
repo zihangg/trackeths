@@ -65,14 +65,9 @@ public class HistoryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_history, container, false);
         Log.i("Debugging", "Starting Category Fragment");
+
         mAuth = FirebaseAuth.getInstance();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
-        if(account != null){
-            userId = account.getId();
-        }
-        else{
-            userId = mAuth.getCurrentUser().getUid();
-        }
+        userId = mAuth.getCurrentUser().getUid();
 
         db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);

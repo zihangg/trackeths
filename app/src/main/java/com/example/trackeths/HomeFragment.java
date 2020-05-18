@@ -1,20 +1,28 @@
 package com.example.trackeths;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.webkit.MimeTypeMap;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,7 +34,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -47,6 +59,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
@@ -54,12 +67,18 @@ import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -67,24 +86,31 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
+import static android.app.Activity.RESULT_OK;
 import static com.example.trackeths.Globals.Globals.categoryNames;
 
 public class HomeFragment extends Fragment implements NavigationView.OnNavigationItemSelectedListener{
 
 
     private final static String TAG = "Testing";
+    private static final int PERMISSION_CODE = 42 ;
+    private static final int PICTURE_CODE = 43;
+    private static final int GALLERY_REQUEST_CODE = 44;
     private RecyclerView expenseList;
     private FirebaseRecyclerAdapter<Model, Holder> adapter;
     private DatabaseReference db;
     private FirebaseAuth mAuth;
+    private StorageReference storageReference;
     private DrawerLayout drawerLayout;
     private Button addExpense, menu;
     private TextView day, date, profileName, profileEmail;
-    private ImageView profilePicture;
+    private ImageView profilePicture, receipt;
     private EditText spentDescription, spentAmount, editDescription, editAmount;
-    private String dbDate, userId;
+    private String dbDate, userId, imageUrl;
     private ArrayList<String> categories = new ArrayList<>();
     private Spinner categorySelect;
+    private Uri uri;
+    private String imagePath = null;
 
     //required constructor
     public HomeFragment(){
@@ -124,16 +150,11 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         }
 
         mAuth = FirebaseAuth.getInstance();
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity());
-        if(account != null){
-            userId = account.getId();
-        }
-        else{
-            userId = mAuth.getCurrentUser().getUid();
-        }
+        userId = mAuth.getCurrentUser().getUid();
 
         db = FirebaseDatabase.getInstance().getReference().child("Users").child(userId);
         db.keepSynced(true);
+        storageReference = FirebaseStorage.getInstance().getReference().child("Images");
         loadCategories(categories);
 
         expenseList= view.findViewById(R.id.recyclerView);
@@ -175,7 +196,10 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         Log.d("TAG", "onViewCreated");
-
+        for (UserInfo user: mAuth.getCurrentUser().getProviderData()){
+            Log.i("TAG", user.getProviderId());
+        }
+        Log.i("TAG", mAuth.getCurrentUser().getUid());
         //open nav bar
         menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,35 +210,38 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
                 drawerLayout.openDrawer(GravityCompat.START);
 
-                GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount((getActivity()));
-                if (account != null){
-                    profileName.setText(account.getDisplayName());
-                    profileEmail.setText(account.getEmail());
-                    if(account.getPhotoUrl() == null){
-                        //if no profile picture, use default image
-                        profilePicture.setImageResource(R.drawable.profile_picture);
+
+                for (UserInfo user: mAuth.getCurrentUser().getProviderData()){
+                    //since firebase is always top provider and google second:
+                    if (user.getProviderId().length() > 1 ){
+                        profileName.setText(mAuth.getCurrentUser().getDisplayName());
+                        profileEmail.setText(mAuth.getCurrentUser().getEmail());
+                        if(mAuth.getCurrentUser().getPhotoUrl() == null){
+                            //if no profile picture, use default image
+                            profilePicture.setImageResource(R.drawable.profile_picture);
+                        }
+                        else{
+                            Uri profilePictureUrl = mAuth.getCurrentUser().getPhotoUrl();
+                            Glide.with(getActivity()).load(String.valueOf(profilePictureUrl)).into(profilePicture);
+                        }
                     }
                     else{
-                        Uri profilePictureUrl = account.getPhotoUrl();
-                        Glide.with(getActivity()).load(String.valueOf(profilePictureUrl)).into(profilePicture);
+                        db.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                User user = dataSnapshot.getValue(User.class);
+                                profileName.setText(user.getName());
+                                profileEmail.setText(user.getEmail());
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
                     }
                 }
 
-                else{
-                    db.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            profileName.setText(user.getName());
-                            profileEmail.setText(user.getEmail());
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
             }
         });
 
@@ -235,6 +262,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
                 );
 
+                receipt = bottomSheetView.findViewById(R.id.receipt);
                 spentDescription = bottomSheetView.findViewById(R.id.spentDescription);
                 spentAmount = bottomSheetView.findViewById(R.id.spentAmount);
 
@@ -244,6 +272,41 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
                 categorySelect.setAdapter(dataAdapter);
                 loadAdapters(dataAdapter);
 
+                receipt.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(ContextCompat.checkSelfPermission(getActivity(),
+                                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getActivity(),
+                                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getActivity(),
+                                Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+
+                            String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+                            requestPermissions(permission, PERMISSION_CODE);
+                        }
+                        else{
+                            final CharSequence[] options = {"Camera", "Gallery", "Cancel"};
+                            AlertDialog.Builder cameraGallery = new AlertDialog.Builder(getActivity());
+                            cameraGallery.setTitle("Select Image Source");
+                            cameraGallery.setItems(options, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (options[which].equals("Camera")){
+                                        startCamera();
+                                    }
+                                    else if (options[which].equals("Gallery")){
+                                        openGallery();
+                                    }
+                                    else{
+                                        dialog.dismiss();
+                                    }
+                                }
+                            });
+                            cameraGallery.show();
+                        }
+                    }
+                });
 
                 bottomSheetView.findViewById(R.id.save).setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -273,6 +336,85 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
             }
         });
 
+    }
+
+/*    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera();
+            } else {
+                Toast.makeText(getActivity(), "Permission denied.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }*/
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.i("TAG", "Running onActivityResult");
+        if (resultCode == RESULT_OK){
+            switch (requestCode){
+                case PICTURE_CODE:
+                    receipt.setImageURI(uri);
+                    break;
+
+                case GALLERY_REQUEST_CODE:
+                    uri = data.getData();
+                    receipt.setImageURI(uri);
+                    break;
+            }
+
+        }
+    }
+
+    private void startCamera() {
+
+        Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+
+        if(camera.resolveActivity(getActivity().getPackageManager())!=null){
+            File imageFile = null;
+
+            try{
+                imageFile = getImageFile();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+
+            if (imageFile != null){
+                uri = FileProvider.getUriForFile(getActivity(), "com.example.trackeths.fileprovider", imageFile);
+                camera.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+                startActivityForResult(camera, PICTURE_CODE);
+            }
+        }
+
+
+
+
+
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void openGallery(){
+        Intent gallery = new Intent (Intent.ACTION_PICK);
+        gallery.setType("image/*");
+        String[] types = {"image/jpeg", "image/png"};
+        gallery.putExtra(Intent.EXTRA_MIME_TYPES, types);
+        startActivityForResult(gallery, GALLERY_REQUEST_CODE);
+
+    }
+
+    private File getImageFile() throws IOException {
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageName = "jpg_"+timeStamp+"_";
+        File directory = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imageFile = File.createTempFile(imageName, ".jpg", directory);
+        imagePath = imageFile.getAbsolutePath();
+        return imageFile;
     }
 
 
@@ -315,14 +457,48 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
 
                         editDescription = editSheetView.findViewById(R.id.editDescription);
                         editAmount = editSheetView.findViewById(R.id.editAmount);
+                        receipt = editSheetView.findViewById(R.id.receipt);
 
                         editDescription.setText(model.getDescription());
                         editAmount.setText(model.getAmount());
+                        Glide.with(getActivity()).load(String.valueOf(model.getImageUrl())).into(receipt);
 
+                        receipt.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if(ContextCompat.checkSelfPermission(getActivity(),
+                                        Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED
+                                        || ContextCompat.checkSelfPermission(getActivity(),
+                                        Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+                                        || ContextCompat.checkSelfPermission(getActivity(),
+                                        Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
 
-
-
-
+                                    String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE};
+                                    requestPermissions(permission, PERMISSION_CODE);
+                                }
+                                else{
+                                    final CharSequence[] options = {"Camera", "Gallery", "Cancel"};
+                                    AlertDialog.Builder cameraGallery = new AlertDialog.Builder(getActivity());
+                                    cameraGallery.setTitle("Select Image Source");
+                                    cameraGallery.setItems(options, new DialogInterface.OnClickListener() {
+                                        @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (options[which].equals("Camera")){
+                                                startCamera();
+                                            }
+                                            else if (options[which].equals("Gallery")){
+                                                openGallery();
+                                            }
+                                            else{
+                                                dialog.dismiss();
+                                            }
+                                        }
+                                    });
+                                    cameraGallery.show();
+                                }
+                            }
+                        });
 
 
                         editSheetView.findViewById(R.id.delete).setOnClickListener(new View.OnClickListener() {
@@ -401,11 +577,27 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         transactionRef.removeValue();
     }
 
-    private void saveTransaction(String amount, String description, String category){
-        DatabaseReference transactionRef = db.child("Transactions").child(dbDate);
-        String id = transactionRef.push().getKey();
-        Model newEntry = new Model(id, description, amount, category);
-        transactionRef.child(id).setValue(newEntry);
+    private void saveTransaction(final String amount, final String description, final String category){
+        final DatabaseReference transactionRef = db.child("Transactions").child(dbDate);
+        final String id = transactionRef.push().getKey();
+        if (uri != null){
+            StorageReference fileReference = storageReference.child(System.currentTimeMillis()+"."+getFileExtension(uri));
+            fileReference.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    taskSnapshot.getMetadata().getReference().getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            imageUrl = uri.toString();
+                            Model newEntry = new Model(id, description, amount, category, imageUrl);
+                            transactionRef.child(id).setValue(newEntry);
+                        }
+                    });
+
+                }
+            });
+        }
+
     }
 
     private void saveEdit(String id, String amount, String description, String category){
@@ -414,6 +606,15 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         transactionRef.child(id).child("description").setValue(description);
         transactionRef.child(id).child("category").setValue(category);
     }
+
+
+    //get extension from file to be uploaded (e.g jpg)
+    private String getFileExtension(Uri uri){
+        ContentResolver cr = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(cr.getType(uri));
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -494,18 +695,7 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         ad.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if (account != null){
-                    GoogleSignInClient signInClient = GoogleSignIn.getClient(getActivity(), GoogleSignInOptions.DEFAULT_SIGN_IN);
-                    signInClient.signOut().addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getActivity(), "Signed out successfully!", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                else{
-                    mAuth.signOut();
-                }
+                mAuth.signOut();
                 Intent intent = new Intent(getActivity().getApplicationContext(), MainActivity.class);
                 getActivity().finish();
                 startActivity(intent);

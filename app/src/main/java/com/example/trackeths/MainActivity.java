@@ -31,9 +31,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -68,17 +70,22 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseDatabase.getInstance().getReference();
 
+        if (mAuth.getCurrentUser() != null){
+            Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
         //gso code taken from google api page
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestIdToken(getString(R.string.default_web_client_id)).
+                requestEmail().build();
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
         google.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (v.getId()){
-                    case R.id.googleButton:
-                        googleSignIn();
-                        break;
+                if (v.getId() == R.id.googleButton) {
+                    googleSignIn();
                 }
             }
         });
@@ -111,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                             progressDialog.dismiss();
                         }
                     }, 3000);
+
                 }
             }
         });
@@ -194,11 +202,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void signIn(String userEmail, String pw){
+    private void signIn(final String userEmail, String pw){
         mAuth.signInWithEmailAndPassword(userEmail, pw).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()){
+                    //SaveSharedPreferences.setUsername(MainActivity.this, userEmail);
                     Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
                     startActivity(intent);
                     finish();
@@ -225,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     private void handleGoogleSignIn(Task<GoogleSignInAccount> completedTask){
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
@@ -233,13 +243,13 @@ public class MainActivity extends AppCompatActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    final GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+                    final FirebaseUser fUser = mAuth.getCurrentUser();
                     accountRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            if (!dataSnapshot.hasChild(acct.getId())){
-                                User newUser = new User(acct.getEmail(), acct.getDisplayName());
-                                db.child("Users").child(acct.getId()).setValue(newUser);
+                            if (!dataSnapshot.hasChild(fUser.getUid())){
+                                User newUser = new User(fUser.getEmail(), fUser.getDisplayName());
+                                db.child("Users").child(fUser.getUid()).setValue(newUser);
                             }
                         }
 
@@ -250,8 +260,18 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }
             }, 2000);
-            Intent intent = new Intent(this, HomeActivity.class);
-            startActivity(intent);
+            //GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(getBaseContext());
+            //SaveSharedPreferences.setUsername(MainActivity.this, acct.getEmail());
+            AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+            mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    Intent intent = new Intent(getApplicationContext(), HomeActivity.class);
+                    startActivity(intent);
+                }
+            });
+            /*Intent intent = new Intent(this, HomeActivity.class);
+            startActivity(intent);*/
         } catch (ApiException e){
             Log.w("Failed google sign in: ", "Failure code: " + e.getStatusCode() );
         }

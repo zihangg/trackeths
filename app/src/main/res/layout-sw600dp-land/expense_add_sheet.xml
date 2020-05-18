@@ -59,10 +59,12 @@
         android:layout_marginRight="@dimen/marginsLR"
         android:layout_margin="10dp" />
 
-    <Button
-        android:id="@+id/button"
+    <ImageView
+        android:id="@+id/receipt"
         android:layout_width="228dp"
         android:layout_height="158dp"
+        android:clickable="true"
+        android:focusable="true"
         android:layout_marginLeft="@dimen/marginsLR"
         android:layout_marginTop="10dp"
         android:layout_marginRight="@dimen/marginsLR"

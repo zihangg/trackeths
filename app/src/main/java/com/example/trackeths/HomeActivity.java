@@ -41,11 +41,15 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 public class HomeActivity extends AppCompatActivity{
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private DatabaseReference db;
+    private FirebaseAuth mAuth;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
