@@ -54,24 +54,32 @@ public class HomeActivity extends AppCompatActivity{
         setContentView(R.layout.activity_home);
 
 
-
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT){
             createHomeFrag();
         }
         else if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            //homeFrag already initialized statically in xml
-            tabLayout = findViewById(R.id.tabLayout);
-            viewPager = findViewById(R.id.viewPager);
-            ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-            Log.i("Debug Orientation", "Orientation is Landscape.");
-            adapter.addFragment(new CategoryFragment(), "Categories");
-            adapter.addFragment(new HistoryFragment(), "History");
-            adapter.addFragment(new ProfileFragment(), "Profile");
-            adapter.addFragment(new StatisticsFragment(), "Statistics");
+            if (tabletSize){
+                //homeFrag already initialized statically in xml
+                tabLayout = findViewById(R.id.tabLayout);
+                viewPager = findViewById(R.id.viewPager);
+                ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
-            viewPager.setAdapter(adapter);
-            tabLayout.setupWithViewPager(viewPager);
+                Log.i("Debug Orientation", "Orientation is Landscape.");
+                adapter.addFragment(new CategoryFragment(), "Category");
+                adapter.addFragment(new HistoryFragment(), "History");
+                adapter.addFragment(new StatisticsFragment(), "Statistics");
+                adapter.addFragment(new ProfileFragment(), "Profile");
+
+
+                viewPager.setAdapter(adapter);
+                tabLayout.setupWithViewPager(viewPager);
+            }
+            else{
+                createHomeFrag();
+            }
+
         }
 
 

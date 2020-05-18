@@ -116,9 +116,10 @@ public class HomeFragment extends Fragment implements NavigationView.OnNavigatio
         drawerLayout = view.findViewById(R.id.drawer);
         menu = view.findViewById(R.id.menu);
 
-        //remove menu since landscape has slide view
+        //remove menu since landscape has slide view for tablets
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
         Configuration config = getResources().getConfiguration();
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE){
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE && tabletSize){
             menu.setVisibility(View.GONE);
         }
 
