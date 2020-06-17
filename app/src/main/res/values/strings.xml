@@ -24,10 +24,11 @@
     <string name="h_i_s_t_o_r_y">H I S T O R Y</string>
     <string name="full_name">Full Name</string>
     <string name="s_t_a_t_i_s_t_i_c_s">S T A T I S T I C S</string>
+    <string name="t_r_a_c_k_e_t_h">T R A C K E T H</string>
     <string-array name="statistics">
-        <item name = "24hrs">Past 24 Hours</item>
-        <item name = "7days">Past 7 Days</item>
-        <item name = "month">Past Month</item>
-        <item name = "year">Past Year</item>
+        <item name="24hrs">Past 24 Hours</item>
+        <item name="7days">Past 7 Days</item>
+        <item name="month">Past Month</item>
+        <item name="year">Past Year</item>
     </string-array>
 </resources>
